@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Nilai Tempat & Nilai Angka - Kelas 5 SD</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Fredoka & Nunito untuk tampilan edukatif anak SD yang ramah & jelas -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #e0f2fe 0%, #fef9c3 50%, #dcfce7 100%);
+            min-height: 100vh;
+        }
+        h1, h2, h3, .font-display {
+            font-family: 'Fredoka', sans-serif;
+        }
+        .digit-card {
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .digit-card:hover {
+            transform: translateY(-6px) scale(1.03);
+        }
+        .digit-card.active {
+            transform: translateY(-8px) scale(1.06);
+            box-shadow: 0 12px 20px -5px rgba(0, 0, 0, 0.2);
+        }
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .animate-pop {
+            animation: popIn 0.3s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="text-slate-800 p-3 sm:p-6 flex flex-col items-center justify-center">
+
+    <!-- Container Utama -->
+    <div class="w-full max-w-4xl bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl border-4 border-amber-400 overflow-hidden">
+        
+        <!-- Header Bertema Petualangan Pulau Angka -->
+        <header class="bg-gradient-to-r from-amber-500 via-orange-500 to-amber-500 p-5 text-white text-center relative overflow-hidden">
+            <div class="relative z-10">
+                <div class="inline-flex items-center gap-2 bg-white/20 px-4 py-1 rounded-full text-xs sm:text-sm font-bold tracking-wider uppercase mb-2">
+                    <span>🧭 Misi Pulau Angka • Matematika Kelas 5 SD</span>
+                </div>
+                <h1 class="text-2xl sm:text-4xl font-bold drop-shadow-sm">
+                    Kalkulator Nilai Tempat & Nilai Angka
+                </h1>
+                <p class="text-amber-100 text-sm sm:text-base mt-1 font-semibold">
+                    Eksplorasi Bilangan Cacah 1 sampai 1.000.000 bersama Kapten Valo, Tara & Bima!
+                </p>
+            </div>
+        </header>
+
+        <!-- Navigasi Mode (Kalkulator vs Tantangan Kuis) -->
+        <div class="flex flex-wrap border-b-2 border-slate-100 bg-slate-50 p-2 gap-2 justify-center">
+            <button id="btnModeCalc" onclick="switchMode('calc')" class="flex-1 min-w-[140px] max-w-xs py-2.5 px-3 rounded-2xl font-display font-semibold text-sm sm:text-base transition-all bg-sky-500 text-white shadow-md cursor-pointer">
+                🧮 Mode Kalkulator
+            </button>
+            <button id="btnModeOps" onclick="switchMode('ops')" class="flex-1 min-w-[140px] max-w-xs py-2.5 px-3 rounded-2xl font-display font-semibold text-sm sm:text-base transition-all bg-white text-slate-600 hover:bg-slate-100 border border-slate-200 cursor-pointer">
+                ➕➖✖️➗ Operasi Hitung
+            </button>
+            <button id="btnModeQuiz" onclick="switchMode('quiz')" class="flex-1 min-w-[140px] max-w-xs py-2.5 px-3 rounded-2xl font-display font-semibold text-sm sm:text-base transition-all bg-white text-slate-600 hover:bg-slate-100 border border-slate-200 cursor-pointer">
+                🏆 Tantangan Level 3
+            </button>
+        </div>
+
+        <!-- ==================== MODE 1: KALKULATOR EKSPLORASI ==================== -->
+        <main id="sectionCalc" class="p-4 sm:p-8 space-y-6">
+            
+            <!-- Kotak Input Angka -->
+            <div class="bg-sky-50 border-2 border-sky-200 rounded-2xl p-4 sm:p-6">
+                <label for="numberInput" class="block text-sm sm:text-base font-extrabold text-sky-900 mb-2">
+                    Masukkan Bilangan Cacah (1 – 1.000.000):
+                </label>
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <input 
+                        type="text" 
+                        id="numberInput" 
+                        inputmode="numeric"
+                        value="654.321" 
+                        placeholder="Contoh: 847.235"
+                        class="w-full text-2xl sm:text-4xl font-display font-bold text-center sm:text-left tracking-widest bg-white border-3 border-sky-400 focus:border-amber-500 focus:outline-none rounded-2xl px-5 py-3 text-slate-800 shadow-inner"
+                    >
+                    <div class="flex gap-2 shrink-0">
+                        <button onclick="generateRandomNumber()" class="flex-1 sm:flex-none bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-white font-bold px-5 py-3 rounded-2xl shadow-md transition flex items-center justify-center gap-2 cursor-pointer" title="Acak Angka Baru">
+                            <span>🎲</span> <span>Acak</span>
+                        </button>
+                        <button onclick="setMaxNumber()" class="flex-1 sm:flex-none bg-amber-500 hover:bg-amber-600 active:scale-95 text-white font-bold px-4 py-3 rounded-2xl shadow-md transition flex items-center justify-center gap-1 cursor-pointer" title="Coba Angka 1 Juta">
+                            <span>👑</span> <span>1 Juta</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Pesan Peringatan Validasi (Pengganti alert) -->
+                <div id="errorBanner" class="hidden mt-3 bg-rose-100 border-l-4 border-rose-500 text-rose-800 p-3 rounded-r-xl text-sm font-bold animate-pop">
+                    ⚠️ Maksimal bilangan yang didukung adalah 1.000.000 (Satu Juta)!
+                </div>
+
+                <!-- Cara Membaca Bilangan (Terbilang) -->
+                <div class="mt-4 bg-white rounded-xl p-3 border border-sky-200 flex items-start sm:items-center gap-3">
+                    <span class="text-2xl">🗣️</span>
+                    <div>
+                        <span class="text-xs uppercase font-extrabold text-sky-600 block">Cara Membaca Bilangan:</span>
+                        <p id="terbilangText" class="text-sm sm:text-base font-bold text-slate-700 capitalize">
+                            enam ratus lima puluh empat ribu tiga ratus dua puluh satu
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Papan Blok Nilai Tempat (7 Slot: Jutaan s/d Satuan) -->
+            <div>
+                <div class="flex items-center justify-between mb-3">
+                    <h2 class="text-lg sm:text-xl font-bold text-slate-800 flex items-center gap-2">
+                        <span>🧱 Papan Nilai Tempat</span>
+                        <span class="text-xs font-normal bg-amber-100 text-amber-800 px-2.5 py-0.5 rounded-full font-bold">Klik kartu angka untuk detail!</span>
+                    </h2>
+                </div>
+
+                <!-- Grid 7 Kolom Responsif -->
+                <div id="placeValueGrid" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2.5 sm:gap-3">
+                    <!-- Kartu di-render otomatis via JavaScript -->
+                </div>
+            </div>
+
+            <!-- Panel Sorotan Detail (Highlight Digit Terpilih) -->
+            <div id="detailCard" class="bg-gradient-to-br from-indigo-600 to-purple-700 text-white rounded-2xl p-5 sm:p-6 shadow-lg transition-all">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div class="flex items-center gap-4">
+                        <div id="highlightDigitBox" class="w-16 h-16 sm:w-20 sm:h-20 bg-white text-indigo-700 rounded-2xl flex items-center justify-center text-4xl sm:text-5xl font-display font-bold shadow-md shrink-0">
+                            6
+                        </div>
+                        <div>
+                            <span class="text-indigo-200 text-xs sm:text-sm font-bold uppercase tracking-wider">Analisis Digit Terpilih</span>
+                            <h3 id="highlightTitle" class="text-xl sm:text-2xl font-bold mt-0.5">
+                                Angka <span class="text-amber-300">6</span> menempati Nilai Tempat <span class="underline decoration-amber-400">Ratus Ribuan</span>
+                            </h3>
+                            <p id="highlightDesc" class="text-indigo-100 text-sm sm:text-base mt-1">
+                                Karena berada di posisi Ratus Ribuan, maka <strong>Nilai Angkanya</strong> adalah <span class="bg-white/20 px-2 py-0.5 rounded font-extrabold text-amber-300">600.000</span>.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bentuk Panjang (Penjumlahan Nilai Angka) -->
+            <div class="bg-amber-50 border-2 border-amber-200 rounded-2xl p-4 sm:p-5">
+                <span class="text-xs font-extrabold uppercase tracking-wider text-amber-700 block mb-1">
+                    ➕ Bentuk Panjang (Penjumlahan Nilai Angka):
+                </span>
+                <p id="expandedFormText" class="text-base sm:text-lg font-extrabold text-slate-800 break-words leading-relaxed">
+                    600.000 + 50.000 + 4.000 + 300 + 20 + 1
+                </p>
+            </div>
+        </main>
+
+        <!-- ==================== MODE 2: OPERASI HITUNG BERDASARKAN NILAI TEMPAT ==================== -->
+        <section id="sectionOps" class="hidden p-4 sm:p-8 space-y-6">
+            <div class="bg-emerald-50 border-2 border-emerald-200 rounded-2xl p-4 sm:p-6">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+                    <div>
+                        <span class="text-xs font-extrabold uppercase tracking-wider text-emerald-700 bg-emerald-200/70 px-2.5 py-0.5 rounded-full">Level 3 • Dekomposisi 4 Operasi</span>
+                        <h2 class="text-lg sm:text-xl font-bold text-slate-800 mt-1">Hitung Berdasarkan Nilai Tempat (+, −, ×, ÷)</h2>
+                    </div>
+                    <button onclick="generateRandomOperation()" class="self-start sm:self-auto bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white text-sm font-bold px-4 py-2 rounded-xl shadow transition flex items-center gap-1.5 cursor-pointer">
+                        <span>🎲</span> <span>Soal Acak</span>
+                    </button>
+                </div>
+
+                <!-- Pilihan 4 Operator Matematika -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
+                    <button id="btnOpAdd" onclick="setOperator('+')" class="py-2 px-3 rounded-xl font-display font-bold text-sm sm:text-base bg-sky-500 text-white shadow-md transition cursor-pointer">
+                        ➕ Tambah (+)
+                    </button>
+                    <button id="btnOpSub" onclick="setOperator('-')" class="py-2 px-3 rounded-xl font-display font-bold text-sm sm:text-base bg-white text-slate-600 border-2 border-slate-200 hover:bg-slate-100 transition cursor-pointer">
+                        ➖ Kurang (−)
+                    </button>
+                    <button id="btnOpMul" onclick="setOperator('×')" class="py-2 px-3 rounded-xl font-display font-bold text-sm sm:text-base bg-white text-slate-600 border-2 border-slate-200 hover:bg-slate-100 transition cursor-pointer">
+                        ✖️ Kali (×)
+                    </button>
+                    <button id="btnOpDiv" onclick="setOperator('÷')" class="py-2 px-3 rounded-xl font-display font-bold text-sm sm:text-base bg-white text-slate-600 border-2 border-slate-200 hover:bg-slate-100 transition cursor-pointer">
+                        ➗ Bagi (÷)
+                    </button>
+                </div>
+
+                <!-- Input Bilangan 1 & Bilangan 2 -->
+                <div class="grid grid-cols-1 md:grid-cols-11 gap-3 items-center">
+                    <div class="md:col-span-5">
+                        <label id="opsLabel1" class="block text-xs font-extrabold text-slate-600 mb-1">Bilangan Pertama:</label>
+                        <input type="text" id="opsNum1" inputmode="numeric" value="425.300" class="w-full text-xl sm:text-2xl font-display font-bold text-center bg-white border-2 border-emerald-400 focus:border-amber-500 focus:outline-none rounded-xl px-3 py-2.5 text-slate-800">
+                    </div>
+
+                    <div class="md:col-span-1 flex justify-center items-center pt-0 md:pt-5">
+                        <span id="opsActiveSymbol" class="w-11 h-11 rounded-full bg-sky-500 text-white font-display font-bold text-2xl flex items-center justify-center shadow">
+                            +
+                        </span>
+                    </div>
+
+                    <div class="md:col-span-5">
+                        <label id="opsLabel2" class="block text-xs font-extrabold text-slate-600 mb-1">Bilangan Kedua:</label>
+                        <input type="text" id="opsNum2" inputmode="numeric" value="142.500" class="w-full text-xl sm:text-2xl font-display font-bold text-center bg-white border-2 border-emerald-400 focus:border-amber-500 focus:outline-none rounded-xl px-3 py-2.5 text-slate-800">
+                    </div>
+                </div>
+
+                <!-- Tombol Cepat Kelipatan 10 (Khusus Mode Kali & Bagi) -->
+                <div id="quickPowerTenBar" class="hidden mt-3 flex flex-wrap items-center gap-2 bg-white/80 p-2.5 rounded-xl border border-emerald-200">
+                    <span class="text-xs font-extrabold text-emerald-800">⚡ Uji Pergeseran Nilai Tempat:</span>
+                    <button onclick="setQuickSecondNumber(2)" class="text-xs font-bold bg-indigo-100 hover:bg-indigo-200 text-indigo-800 px-2.5 py-1 rounded-lg cursor-pointer">2</button>
+                    <button onclick="setQuickSecondNumber(5)" class="text-xs font-bold bg-indigo-100 hover:bg-indigo-200 text-indigo-800 px-2.5 py-1 rounded-lg cursor-pointer">5</button>
+                    <button onclick="setQuickSecondNumber(10)" class="text-xs font-bold bg-amber-100 hover:bg-amber-200 text-amber-800 px-2.5 py-1 rounded-lg cursor-pointer">10 (Geser 1 Posisi)</button>
+                    <button onclick="setQuickSecondNumber(100)" class="text-xs font-bold bg-amber-100 hover:bg-amber-200 text-amber-800 px-2.5 py-1 rounded-lg cursor-pointer">100 (Geser 2 Posisi)</button>
+                    <button onclick="setQuickSecondNumber(1000)" class="text-xs font-bold bg-amber-100 hover:bg-amber-200 text-amber-800 px-2.5 py-1 rounded-lg cursor-pointer">1.000 (Geser 3 Posisi)</button>
+                </div>
+
+                <!-- Pesan Validasi Operasi -->
+                <div id="opsErrorBanner" class="hidden mt-3 bg-rose-100 border-l-4 border-rose-500 text-rose-800 p-3 rounded-r-xl text-sm font-bold animate-pop">
+                </div>
+            </div>
+
+            <!-- Tabel Papan Operasi Per Nilai Tempat -->
+            <div class="bg-white border-2 border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+                <div class="bg-slate-800 text-white px-4 py-2.5 text-xs sm:text-sm font-bold flex justify-between items-center">
+                    <span id="opsTableTitle">📊 Rincian Operasi Setiap Nilai Tempat</span>
+                    <span id="opsSummaryBadge" class="bg-amber-400 text-slate-900 px-2.5 py-0.5 rounded-full font-extrabold">Hasil: 567.800</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-600 text-xs uppercase border-b border-slate-200">
+                                <th class="py-2.5 px-3 sm:px-4">Nilai Tempat</th>
+                                <th id="opsColHeader1" class="py-2.5 px-3 text-right">Bilangan 1</th>
+                                <th class="py-2.5 px-2 text-center">Operasi</th>
+                                <th id="opsColHeader2" class="py-2.5 px-3 text-right">Bilangan 2</th>
+                                <th id="opsColHeaderResult" class="py-2.5 px-3 sm:px-4 text-right">Hasil Nilai Angka</th>
+                            </tr>
+                        </thead>
+                        <tbody id="opsBreakdownBody" class="divide-y divide-slate-100 text-sm sm:text-base font-bold">
+                            <!-- Diisi otomatis via JavaScript -->
+                        </tbody>
+                        <tfoot>
+                            <tr class="bg-amber-50 border-t-2 border-amber-300 text-slate-900 font-display text-base sm:text-lg">
+                                <td colspan="4" class="py-3 px-4 text-right font-bold">Total Hasil Akhir:</td>
+                                <td id="opsTotalCell" class="py-3 px-4 text-right font-extrabold text-indigo-700">567.800</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Catatan Sisa Pembagian atau Pergeseran Posisi -->
+            <div id="opsInsightBanner" class="hidden bg-amber-50 border-2 border-amber-300 rounded-xl p-3.5 text-sm font-bold text-amber-900">
+            </div>
+
+            <!-- Cara Membaca Hasil Operasi -->
+            <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-3.5 flex items-center gap-3">
+                <span class="text-2xl">🗣️</span>
+                <div>
+                    <span class="text-xs uppercase font-extrabold text-indigo-600 block">Terbilang Hasil Operasi:</span>
+                    <p id="opsTerbilangText" class="text-sm sm:text-base font-bold text-slate-800 capitalize">
+                        lima ratus enam puluh tujuh ribu delapan ratus
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== MODE 3: TANTANGAN GERBANG EMAS (KUIS LEVEL 3) ==================== -->
+        <section id="sectionQuiz" class="hidden p-4 sm:p-8 space-y-6">
+            <div class="bg-gradient-to-r from-amber-100 to-orange-100 border-2 border-amber-300 rounded-2xl p-5 text-center">
+                <div class="flex justify-between items-center mb-3 text-sm font-extrabold">
+                    <span class="bg-white px-3 py-1 rounded-full text-amber-700 shadow-sm">⚔️ Tantangan Level 3: Kali, Bagi & Nilai</span>
+                    <span id="quizScoreBadge" class="bg-emerald-600 text-white px-3 py-1 rounded-full shadow-sm">Skor: 0</span>
+                </div>
+                
+                <p id="quizSubInstruction" class="text-slate-600 font-bold text-sm sm:text-base">Pecahkan teka-teki perkalian & pembagian nilai tempat berikut:</p>
+        <!-- Footer Edukatif -->
+        <footer class="bg-slate-100 px-6 py-3 text-center text-xs sm:text-sm text-slate-500 font-semibold border-t border-slate-200">
+            💡 Ingat kata Kapten Valo: <strong>Nilai Tempat</strong> adalah nama posisinya, sedangkan <strong>Nilai Angka</strong> adalah nilainya dengan angka nol!
+        </footer>
+    </div>
+
+    <script>
+        // Konfigurasi 7 posisi nilai tempat dari kiri (Jutaan) ke kanan (Satuan)
+        const PLACE_VALUES = [
+            { index: 0, name: 'Jutaan', multiplier: 1000000, colorBg: 'bg-rose-100', colorBorder: 'border-rose-400', colorHeader: 'bg-rose-500', textCol: 'text-rose-700' },
+            { index: 1, name: 'Ratus Ribuan', multiplier: 100000, colorBg: 'bg-orange-100', colorBorder: 'border-orange-400', colorHeader: 'bg-orange-500', textCol: 'text-orange-700' },
+            { index: 2, name: 'Puluh Ribuan', multiplier: 10000, colorBg: 'bg-amber-100', colorBorder: 'border-amber-400', colorHeader: 'bg-amber-500', textCol: 'text-amber-800' },
+            { index: 3, name: 'Ribuan', multiplier: 1000, colorBg: 'bg-emerald-100', colorBorder: 'border-emerald-400', colorHeader: 'bg-emerald-500', textCol: 'text-emerald-700' },
+            { index: 4, name: 'Ratusan', multiplier: 100, colorBg: 'bg-sky-100', colorBorder: 'border-sky-400', colorHeader: 'bg-sky-500', textCol: 'text-sky-700' },
+            { index: 5, name: 'Puluhan', multiplier: 10, colorBg: 'bg-indigo-100', colorBorder: 'border-indigo-400', colorHeader: 'bg-indigo-500', textCol: 'text-indigo-700' },
+            { index: 6, name: 'Satuan', multiplier: 1, colorBg: 'bg-purple-100', colorBorder: 'border-purple-400', colorHeader: 'bg-purple-500', textCol: 'text-purple-700' }
+        ];
+
+        let currentNumber = 654321;
+        let selectedSlotIndex = 1; // Default menyorot Ratus Ribuan (angka 6 pada 654.321)
+
+        // Format angka dengan pemisah titik ribuan ala Indonesia
+        function formatIndoNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+
+        // Fungsi mengubah angka menjadi teks bahasa Indonesia (Terbilang)
+        function angkaKeTerbilang(n) {
+            if (n === 0) return "nol";
+            if (n === 1000000) return "satu juta";
+
+            const satuan = ["", "satu", "dua", "tiga", "empat", "lima", "enam", "tujuh", "delapan", "sembilan", "sepuluh", "sebelas"];
+            
+            function konversi(num) {
+                if (num < 12) return satuan[num];
+                if (num < 20) return konversi(num - 10) + " belas";
+                if (num < 100) return konversi(Math.floor(num / 10)) + " puluh " + konversi(num % 10);
+                if (num < 200) return "seratus " + konversi(num - 100);
+                if (num < 1000) return konversi(Math.floor(num / 100)) + " ratus " + konversi(num % 100);
+                if (num < 2000) return "seribu " + konversi(num - 1000);
+                if (num < 1000000) return konversi(Math.floor(num / 1000)) + " ribu " + konversi(num % 1000);
+                return "";
+            }
+
+            return konversi(n).replace(/\s+/g, ' ').trim();
+        }
+
+        // Render ulang seluruh papan kalkulator
+        function renderCalculator(num) {
+            currentNumber = num;
+            const paddedStr = num.toString().padStart(7, '0'); // Selalu 7 karakter untuk 7 kolom
+            const firstNonZeroIndex = paddedStr.search(/[1-9]/);
+            const activeStartIdx = firstNonZeroIndex === -1 ? 6 : firstNonZeroIndex;
+
+            // Pastikan slot yang dipilih valid (tidak memilih slot kosong di depan angka)
+            if (selectedSlotIndex < activeStartIdx) {
+                selectedSlotIndex = activeStartIdx;
+            }
+
+            const gridEl = document.getElementById('placeValueGrid');
+            gridEl.innerHTML = '';
+
+            let expandedParts = [];
+
+            PLACE_VALUES.forEach((slot, idx) => {
+                const digitChar = paddedStr[idx];
+                const digitVal = parseInt(digitChar, 10);
+                const isLeadingZero = idx < activeStartIdx;
+                const numericValue = digitVal * slot.multiplier;
+
+                if (!isLeadingZero && digitVal > 0) {
+                    expandedParts.push(formatIndoNumber(numericValue));
+                }
+
+                const isSelected = idx === selectedSlotIndex;
+
+                // Buat kartu slot nilai tempat
+                const card = document.createElement('button');
+                card.type = 'button';
+                card.disabled = isLeadingZero;
+                card.onclick = () => {
+                    selectedSlotIndex = idx;
+                    renderCalculator(currentNumber);
+                };
+
+                card.className = `digit-card flex flex-col rounded-2xl border-3 overflow-hidden text-center transition-all ${
+                    isLeadingZero 
+                        ? 'opacity-35 border-slate-200 bg-slate-50 cursor-not-allowed' 
+                        : `${slot.colorBg} ${slot.colorBorder} cursor-pointer ${isSelected ? 'active ring-4 ring-indigo-500' : ''}`
+                }`;
+
+                card.innerHTML = `
+                    <div class="${isLeadingZero ? 'bg-slate-300' : slot.colorHeader} text-white text-[11px] sm:text-xs font-extrabold py-1.5 px-1 tracking-tight">
+                        ${slot.name}
+                    </div>
+                    <div class="py-3 sm:py-4 flex-1 flex flex-col items-center justify-center">
+                        <span class="text-3xl sm:text-4xl font-display font-bold ${isLeadingZero ? 'text-slate-400' : 'text-slate-800'}">
+                            ${isLeadingZero ? '-' : digitChar}
+                        </span>
+                        <span class="mt-1.5 text-xs sm:text-sm font-extrabold px-2 py-0.5 rounded-full bg-white/80 ${isLeadingZero ? 'text-slate-400' : slot.textCol}">
+                            ${isLeadingZero ? '0' : formatIndoNumber(numericValue)}
+                        </span>
+                    </div>
+                `;
+
+                gridEl.appendChild(card);
+            });
+
+            // Perbarui Terbilang
+            document.getElementById('terbilangText').textContent = angkaKeTerbilang(num);
+
+            // Perbarui Bentuk Panjang
+            document.getElementById('expandedFormText').textContent = 
+                expandedParts.length > 0 ? expandedParts.join(' + ') : '0';
+
+            // Perbarui Panel Sorotan Detail
+            updateDetailHighlight(paddedStr);
+        }
+
+        function updateDetailHighlight(paddedStr) {
+            const slot = PLACE_VALUES[selectedSlotIndex];
+            const digit = parseInt(paddedStr[selectedSlotIndex], 10);
+            const totalValue = digit * slot.multiplier;
+
+            document.getElementById('highlightDigitBox').textContent = digit;
+            document.getElementById('highlightTitle').innerHTML = `
+                Angka <span class="text-amber-300">${digit}</span> menempati Nilai Tempat <span class="underline decoration-amber-400">${slot.name}</span>
+            `;
+            document.getElementById('highlightDesc').innerHTML = `
+                Karena berada di posisi <strong>${slot.name}</strong> (${digit} × ${formatIndoNumber(slot.multiplier)}), maka <strong>Nilai Angkanya</strong> adalah <span class="bg-white/25 px-2.5 py-0.5 rounded-lg font-extrabold text-amber-300 text-base sm:text-lg">${formatIndoNumber(totalValue)}</span>.
+            `;
+        }
+
+        // Handler Input Pengguna
+        const numberInput = document.getElementById('numberInput');
+        const errorBanner = document.getElementById('errorBanner');
+
+        numberInput.addEventListener('input', (e) => {
+            // Ambil hanya karakter angka
+            let rawDigits = e.target.value.replace(/\D/g, '');
+            
+            if (rawDigits === '') {
+                errorBanner.classList.add('hidden');
+                renderCalculator(0);
+                return;
+            }
+
+            let parsed = parseInt(rawDigits, 10);
+
+            // Batasi maksimal 1.000.000 sesuai materi kelas 5 SD
+            if (parsed > 1000000) {
+                parsed = 1000000;
+                errorBanner.classList.remove('hidden');
+            } else {
+                errorBanner.classList.add('hidden');
+            }
+
+            e.target.value = formatIndoNumber(parsed);
+            
+            // Otomatis pilih digit paling kiri (terbesar) saat mengetik angka baru
+            const padded = parsed.toString().padStart(7, '0');
+            const firstIdx = padded.search(/[1-9]/);
+            selectedSlotIndex = firstIdx === -1 ? 6 : firstIdx;
+
+            renderCalculator(parsed);
+        });
+
+        function generateRandomNumber() {
+            errorBanner.classList.add('hidden');
+            // Hasilkan angka acak antara 10.000 sampai 999.999 agar bervariasi 5-6 digit
+            const randomNum = Math.floor(Math.random() * 989999) + 10000;
+            numberInput.value = formatIndoNumber(randomNum);
+            const padded = randomNum.toString().padStart(7, '0');
+            selectedSlotIndex = padded.search(/[1-9]/);
+            renderCalculator(randomNum);
+        }
+
+        function setMaxNumber() {
+            errorBanner.classList.add('hidden');
+            numberInput.value = "1.000.000";
+            selectedSlotIndex = 0; // Sorot posisi Jutaan
+            renderCalculator(1000000);
+        }
+
+        // ==================== LOGIKA MODE KUIS INTERAKTIF ====================
+        let quizScore = 0;
+        let currentQuizAnswer = "";
+        let quizAnswered = false;
+        let currentOperator = '+';
+
+        function switchMode(mode) {
+            const btnCalc = document.getElementById('btnModeCalc');
+            const btnOps = document.getElementById('btnModeOps');
+            const btnQuiz = document.getElementById('btnModeQuiz');
+            const secCalc = document.getElementById('sectionCalc');
+            const secOps = document.getElementById('sectionOps');
+            const secQuiz = document.getElementById('sectionQuiz');
+
+            const inactiveClass = "flex-1 min-w-[140px] max-w-xs py-2.5 px-3 rounded-2xl font-display font-semibold text-sm sm:text-base transition-all bg-white text-slate-600 hover:bg-slate-100 border border-slate-200 cursor-pointer";
+
+            btnCalc.className = inactiveClass;
+            btnOps.className = inactiveClass;
+            btnQuiz.className = inactiveClass;
+
+            secCalc.classList.add('hidden');
+            secOps.classList.add('hidden');
+            secQuiz.classList.add('hidden');
+
+            if (mode === 'calc') {
+                btnCalc.className = "flex-1 min-w-[140px] max-w-xs py-2.5 px-3 rounded-2xl font-display font-semibold text-sm sm:text-base transition-all bg-sky-500 text-white shadow-md cursor-pointer";
+                secCalc.classList.remove('hidden');
+            } else if (mode === 'ops') {
+                btnOps.className = "flex-1 min-w-[140px] max-w-xs py-2.5 px-3 rounded-2xl font-display font-semibold text-sm sm:text-base transition-all bg-emerald-500 text-white shadow-md cursor-pointer";
+                secOps.classList.remove('hidden');
+                calculatePlaceValueOperation();
+            } else {
+                btnQuiz.className = "flex-1 min-w-[140px] max-w-xs py-2.5 px-3 rounded-2xl font-display font-semibold text-sm sm:text-base transition-all bg-amber-500 text-white shadow-md cursor-pointer";
+                secQuiz.classList.remove('hidden');
+                generateQuizQuestion();
+            }
+        }
+
+        // ==================== LOGIKA MODE 2: OPERASI HITUNG NILAI TEMPAT ====================
+        function setOperator(op) {
+            currentOperator = op;
+            const btnAdd = document.getElementById('btnOpAdd');
+            const btnSub = document.getElementById('btnOpSub');
+            const btnMul = document.getElementById('btnOpMul');
+            const btnDiv = document.getElementById('btnOpDiv');
+            const symbolEl = document.getElementById('opsActiveSymbol');
+            const quickBar = document.getElementById('quickPowerTenBar');
+
+            const inactiveBtn = "py-2 px-3 rounded-xl font-display font-bold text-sm sm:text-base bg-white text-slate-600 border-2 border-slate-200 hover:bg-slate-100 transition cursor-pointer";
+            btnAdd.className = inactiveBtn;
+            btnSub.className = inactiveBtn;
+            btnMul.className = inactiveBtn;
+            btnDiv.className = inactiveBtn;
+
+            symbolEl.textContent = op;
+
+            if (op === '+') {
+                btnAdd.className = "py-2 px-3 rounded-xl font-display font-bold text-sm sm:text-base bg-sky-500 text-white shadow-md transition cursor-pointer";
+                symbolEl.className = "w-11 h-11 rounded-full bg-sky-500 text-white font-display font-bold text-2xl flex items-center justify-center shadow";
+                quickBar.classList.add('hidden');
+                document.getElementById('opsLabel1').textContent = "Bilangan Pertama:";
+                document.getElementById('opsLabel2').textContent = "Bilangan Kedua:";
+            } else if (op === '-') {
+                btnSub.className = "py-2 px-3 rounded-xl font-display font-bold text-sm sm:text-base bg-rose-500 text-white shadow-md transition cursor-pointer";
+                symbolEl.className = "w-11 h-11 rounded-full bg-rose-500 text-white font-display font-bold text-2xl flex items-center justify-center shadow";
+                quickBar.classList.add('hidden');
+                document.getElementById('opsLabel1').textContent = "Bilangan Pertama:";
+                document.getElementById('opsLabel2').textContent = "Bilangan Kedua:";
+            } else if (op === '×') {
+                btnMul.className = "py-2 px-3 rounded-xl font-display font-bold text-sm sm:text-base bg-indigo-600 text-white shadow-md transition cursor-pointer";
+                symbolEl.className = "w-11 h-11 rounded-full bg-indigo-600 text-white font-display font-bold text-2xl flex items-center justify-center shadow";
+                quickBar.classList.remove('hidden');
+                document.getElementById('opsLabel1').textContent = "Bilangan yang Dikali:";
+                document.getElementById('opsLabel2').textContent = "Bilangan Pengali (contoh: 4, 10, 100):";
+                if (sanitizeOpsInput(document.getElementById('opsNum2')) > 1000) {
+                    document.getElementById('opsNum1').value = "124.300";
+                    document.getElementById('opsNum2').value = "4";
+                }
+            } else if (op === '÷') {
+                btnDiv.className = "py-2 px-3 rounded-xl font-display font-bold text-sm sm:text-base bg-amber-500 text-white shadow-md transition cursor-pointer";
+                symbolEl.className = "w-11 h-11 rounded-full bg-amber-500 text-white font-display font-bold text-2xl flex items-center justify-center shadow";
+                quickBar.classList.remove('hidden');
+                document.getElementById('opsLabel1').textContent = "Bilangan yang Dibagi:";
+                document.getElementById('opsLabel2').textContent = "Bilangan Pembagi (contoh: 4, 10, 100):";
+                if (sanitizeOpsInput(document.getElementById('opsNum2')) > 1000 || sanitizeOpsInput(document.getElementById('opsNum2')) === 0) {
+                    document.getElementById('opsNum1').value = "480.600";
+                    document.getElementById('opsNum2').value = "2";
+                }
+            }
+            calculatePlaceValueOperation();
+        }
+
+        function setQuickSecondNumber(val) {
+            document.getElementById('opsNum2').value = formatIndoNumber(val);
+            calculatePlaceValueOperation();
+        }
+
+        function sanitizeOpsInput(inputEl) {
+            let raw = inputEl.value.replace(/\D/g, '');
+            if (raw === '') return 0;
+            let val = parseInt(raw, 10);
+            if (val > 1000000) val = 1000000;
+            inputEl.value = formatIndoNumber(val);
+            return val;
+        }
+
+        document.getElementById('opsNum1').addEventListener('input', calculatePlaceValueOperation);
+        document.getElementById('opsNum2').addEventListener('input', calculatePlaceValueOperation);
+
+        function generateRandomOperation() {
+            const ops = ['+', '-', '×', '÷'];
+            const chosenOp = ops[Math.floor(Math.random() * ops.length)];
+            setOperator(chosenOp);
+
+            if (chosenOp === '+') {
+                const n1 = Math.floor(Math.random() * 600000) + 150000;
+                const n2 = Math.floor(Math.random() * (999999 - n1)) + 10000;
+                document.getElementById('opsNum1').value = formatIndoNumber(n1);
+                document.getElementById('opsNum2').value = formatIndoNumber(n2);
+            } else if (chosenOp === '-') {
+                const n1 = Math.floor(Math.random() * 700000) + 200000;
+                const n2 = Math.floor(Math.random() * (n1 - 10000)) + 10000;
+                document.getElementById('opsNum1').value = formatIndoNumber(n1);
+                document.getElementById('opsNum2').value = formatIndoNumber(n2);
+            } else if (chosenOp === '×') {
+                const multipliers = [2, 3, 4, 5, 10, 100];
+                const m = multipliers[Math.floor(Math.random() * multipliers.length)];
+                const maxBase = Math.floor(1000000 / m);
+                const n1 = (Math.floor(Math.random() * Math.max(10, Math.floor(maxBase / 1000))) + 1) * 1000 + (Math.floor(Math.random() * 9) * 100);
+                document.getElementById('opsNum1').value = formatIndoNumber(Math.min(n1, maxBase));
+                document.getElementById('opsNum2').value = formatIndoNumber(m);
+            } else if (chosenOp === '÷') {
+                const divisors = [2, 3, 4, 5, 10, 100];
+                const d = divisors[Math.floor(Math.random() * divisors.length)];
+                const quotient = (Math.floor(Math.random() * 800) + 110) * (d >= 10 ? 10 : 100);
+                const n1 = Math.min(1000000, quotient * d);
+                document.getElementById('opsNum1').value = formatIndoNumber(n1);
+                document.getElementById('opsNum2').value = formatIndoNumber(d);
+            }
+            calculatePlaceValueOperation();
+        }
+
+        function calculatePlaceValueOperation() {
+            const n1 = sanitizeOpsInput(document.getElementById('opsNum1'));
+            const n2 = sanitizeOpsInput(document.getElementById('opsNum2'));
+            const errEl = document.getElementById('opsErrorBanner');
+            const insightEl = document.getElementById('opsInsightBanner');
+            errEl.classList.add('hidden');
+            insightEl.classList.add('hidden');
+
+            const tbody = document.getElementById('opsBreakdownBody');
+            tbody.innerHTML = '';
+            const pad1 = n1.toString().padStart(7, '0');
+            const pad2 = n2.toString().padStart(7, '0');
+
+            // Atur header kolom tabel sesuai jenis operasi
+            document.getElementById('opsColHeader1').textContent = (currentOperator === '×' || currentOperator === '÷') ? 'Nilai Angka Bil. 1' : 'Bilangan 1';
+            document.getElementById('opsColHeader2').textContent = (currentOperator === '×' || currentOperator === '÷') ? (currentOperator === '×' ? 'Pengali' : 'Pembagi') : 'Bilangan 2';
+
+            if (currentOperator === '+' || currentOperator === '-') {
+                let totalResult = currentOperator === '+' ? n1 + n2 : n1 - n2;
+
+                if (currentOperator === '+' && totalResult > 1000000) {
+                    errEl.textContent = "⚠️ Hasil penjumlahan melebihi batas materi kelas 5 SD (1.000.000). Kurangi salah satu bilangan!";
+                    errEl.classList.remove('hidden');
+                } else if (currentOperator === '-' && totalResult < 0) {
+                    errEl.textContent = "⚠️ Untuk bilangan cacah, Bilangan Pertama harus lebih besar atau sama dengan Bilangan Kedua!";
+                    errEl.classList.remove('hidden');
+                }
+
+                PLACE_VALUES.forEach((slot, idx) => {
+                    const val1 = parseInt(pad1[idx], 10) * slot.multiplier;
+                    const val2 = parseInt(pad2[idx], 10) * slot.multiplier;
+                    if (val1 === 0 && val2 === 0 && idx < 4) return;
+
+                    const rowDiff = currentOperator === '+' ? val1 + val2 : val1 - val2;
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-slate-50 transition";
+                    tr.innerHTML = `
+                        <td class="py-2.5 px-3 sm:px-4">
+                            <span class="inline-block w-2.5 h-2.5 rounded-full ${slot.colorHeader} mr-1.5"></span>
+                            <span class="${slot.textCol}">${slot.name}</span>
+                        </td>
+                        <td class="py-2.5 px-3 text-right text-slate-700">${formatIndoNumber(val1)}</td>
+                        <td class="py-2.5 px-2 text-center font-extrabold ${currentOperator === '+' ? 'text-sky-600' : 'text-rose-600'}">${currentOperator}</td>
+                        <td class="py-2.5 px-3 text-right text-slate-700">${formatIndoNumber(val2)}</td>
+                        <td class="py-2.5 px-3 sm:px-4 text-right font-extrabold ${rowDiff < 0 ? 'text-rose-600' : 'text-emerald-700'}">
+                            ${rowDiff < 0 ? '-' + formatIndoNumber(Math.abs(rowDiff)) : formatIndoNumber(rowDiff)}
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                const safeTotal = Math.max(0, totalResult);
+                document.getElementById('opsSummaryBadge').textContent = `Hasil: ${totalResult < 0 ? 'Tidak Valid' : formatIndoNumber(safeTotal)}`;
+                document.getElementById('opsTotalCell').textContent = totalResult < 0 ? '—' : formatIndoNumber(safeTotal);
+                document.getElementById('opsTerbilangText').textContent = totalResult < 0
+                    ? "Bilangan pertama lebih kecil dari bilangan kedua"
+                    : (safeTotal > 1000000 ? "Lebih dari satu juta" : angkaKeTerbilang(safeTotal));
+
+            } else if (currentOperator === '×') {
+                // Dekomposisi Perkalian per Nilai Angka: (a + b + c) × k = (a×k) + (b×k) + (c×k)
+                const totalResult = n1 * n2;
+                if (totalResult > 1000000) {
+                    errEl.textContent = `⚠️ Hasil perkalian (${formatIndoNumber(totalResult)}) melebihi 1.000.000! Kecilkan bilangan pertama atau pengalinya.`;
+                    errEl.classList.remove('hidden');
+                }
+
+                PLACE_VALUES.forEach((slot, idx) => {
+                    const val1 = parseInt(pad1[idx], 10) * slot.multiplier;
+                    if (val1 === 0 && idx < 5) return;
+
+                    const rowProd = val1 * n2;
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-slate-50 transition";
+                    tr.innerHTML = `
+                        <td class="py-2.5 px-3 sm:px-4">
+                            <span class="inline-block w-2.5 h-2.5 rounded-full ${slot.colorHeader} mr-1.5"></span>
+                            <span class="${slot.textCol}">${slot.name}</span>
+                        </td>
+                        <td class="py-2.5 px-3 text-right text-slate-700">${formatIndoNumber(val1)}</td>
+                        <td class="py-2.5 px-2 text-center font-extrabold text-indigo-600">×</td>
+                        <td class="py-2.5 px-3 text-right text-slate-700">${formatIndoNumber(n2)}</td>
+                        <td class="py-2.5 px-3 sm:px-4 text-right font-extrabold text-indigo-700">${formatIndoNumber(rowProd)}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                if (n2 === 10 || n2 === 100 || n2 === 1000) {
+                    const steps = Math.log10(n2);
+                    insightEl.innerHTML = `💡 <strong>Rahasia Kapten Valo:</strong> Mengalikan dengan <strong>${formatIndoNumber(n2)}</strong> menggeser setiap angka ke kiri sebanyak <strong>${steps} posisi Nilai Tempat</strong> (menambah ${steps} nol di belakang)!`;
+                    insightEl.classList.remove('hidden');
+                }
+
+                document.getElementById('opsSummaryBadge').textContent = `Hasil: ${formatIndoNumber(totalResult)}`;
+                document.getElementById('opsTotalCell').textContent = formatIndoNumber(totalResult);
+                document.getElementById('opsTerbilangText').textContent = totalResult > 1000000
+                    ? "Hasil melebihi batas satu juta (1.000.000)"
+                    : angkaKeTerbilang(totalResult);
+
+            } else if (currentOperator === '÷') {
+                // Dekomposisi Pembagian per Nilai Angka
+                if (n2 === 0) {
+                    errEl.textContent = "⚠️ Bilangan tidak dapat dibagi dengan 0 (nol)! Masukkan pembagi minimal 1.";
+                    errEl.classList.remove('hidden');
+                    document.getElementById('opsSummaryBadge').textContent = "Hasil: Tidak Terdefinisi";
+                    document.getElementById('opsTotalCell').textContent = "—";
+                    document.getElementById('opsTerbilangText').textContent = "Tidak dapat membagi dengan nol";
+                    return;
+                }
+
+                const quotient = Math.floor(n1 / n2);
+                const remainder = n1 % n2;
+
+                PLACE_VALUES.forEach((slot, idx) => {
+                    const val1 = parseInt(pad1[idx], 10) * slot.multiplier;
+                    if (val1 === 0 && idx < 5) return;
+
+                    const exactPart = val1 / n2;
+                    const displayPart = Number.isInteger(exactPart)
+                        ? formatIndoNumber(exactPart)
+                        : `${formatIndoNumber(Math.floor(exactPart))} (sisa ${formatIndoNumber(val1 % n2)})`;
+
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-slate-50 transition";
+                    tr.innerHTML = `
+                        <td class="py-2.5 px-3 sm:px-4">
+                            <span class="inline-block w-2.5 h-2.5 rounded-full ${slot.colorHeader} mr-1.5"></span>
+                            <span class="${slot.textCol}">${slot.name}</span>
+                        </td>
+                        <td class="py-2.5 px-3 text-right text-slate-700">${formatIndoNumber(val1)}</td>
+                        <td class="py-2.5 px-2 text-center font-extrabold text-amber-600">÷</td>
+                        <td class="py-2.5 px-3 text-right text-slate-700">${formatIndoNumber(n2)}</td>
+                        <td class="py-2.5 px-3 sm:px-4 text-right font-extrabold text-emerald-700">${displayPart}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                if (remainder > 0) {
+                    insightEl.innerHTML = `ℹ️ <strong>Catatan Pembagian:</strong> ${formatIndoNumber(n1)} ÷ ${formatIndoNumber(n2)} menghasilkan <strong>${formatIndoNumber(quotient)}</strong> dengan <strong>sisa ${formatIndoNumber(remainder)}</strong>.`;
+                    insightEl.classList.remove('hidden');
+                } else if (n2 === 10 || n2 === 100 || n2 === 1000) {
+                    const steps = Math.log10(n2);
+                    insightEl.innerHTML = `💡 <strong>Rahasia Kapten Valo:</strong> Membagi habis dengan <strong>${formatIndoNumber(n2)}</strong> menggeser setiap angka ke kanan sebanyak <strong>${steps} posisi Nilai Tempat</strong> (menghapus ${steps} nol di belakang)!`;
+                    insightEl.classList.remove('hidden');
+                }
+
+                const resultLabel = remainder > 0 ? `${formatIndoNumber(quotient)} (Sisa ${formatIndoNumber(remainder)})` : formatIndoNumber(quotient);
+                document.getElementById('opsSummaryBadge').textContent = `Hasil: ${resultLabel}`;
+                document.getElementById('opsTotalCell').textContent = resultLabel;
+                document.getElementById('opsTerbilangText').textContent = remainder > 0
+                    ? `${angkaKeTerbilang(quotient)} sisa ${angkaKeTerbilang(remainder)}`
+                    : angkaKeTerbilang(quotient);
+            }
+        }
+
+        function generateQuizQuestion() {
+            quizAnswered = false;
+            document.getElementById('quizFeedback').classList.add('hidden');
+            document.getElementById('btnNextQuestion').classList.add('hidden');
+
+            // Level 3: 75% soal operasi hitung (+, -, ×, ÷), 25% soal identifikasi lanjutan
+            const isOperationQuestion = Math.random() < 0.75;
+            const displayContainer = document.getElementById('quizNumberDisplay');
+            const optionsGrid = document.getElementById('quizOptionsGrid');
+            displayContainer.innerHTML = '';
+            optionsGrid.innerHTML = '';
+
+            if (isOperationQuestion) {
+                document.getElementById('quizSubInstruction').textContent = "Selesaikan tantangan operasi hitung nilai tempat berikut!";
+                const questionVariant = Math.floor(Math.random() * 4); // 0: Perkalian nilai tempat, 1: Pembagian nilai tempat, 2: Selisih/Jumlah 2 digit, 3: Komposisi +/-
+
+                if (questionVariant === 0) {
+                    // Perkalian: Contoh (4 Puluh Ribuan × 5) atau (125.000 × 4)
+                    const isPlaceTerm = Math.random() > 0.45;
+                    if (isPlaceTerm) {
+                        const slotIdx = Math.floor(Math.random() * 3) + 2; // Puluh Ribuan, Ribuan, atau Ratusan
+                        const slot = PLACE_VALUES[slotIdx];
+                        const digit = Math.floor(Math.random() * 7) + 2;
+                        const mult = [3, 4, 5, 10][Math.floor(Math.random() * 4)];
+                        const ans = digit * slot.multiplier * mult;
+                        currentQuizAnswer = formatIndoNumber(ans);
+
+                        displayContainer.innerHTML = `
+                            <div class="bg-white border-3 border-indigo-400 px-5 py-3 rounded-2xl font-display font-bold text-2xl sm:text-3xl text-slate-800 shadow">
+                                <span class="text-indigo-600">${digit} ${slot.name}</span> ✖️ ${mult} = ?
+                            </div>
+                        `;
+                        document.getElementById('quizQuestionText').innerHTML = `Berapakah hasil perkalian nilai tempat di atas?`;
+
+                        const distractors = new Set([
+                            formatIndoNumber(ans * 10),
+                            formatIndoNumber(Math.max(1, ans / 10)),
+                            formatIndoNumber((digit + mult) * slot.multiplier),
+                            formatIndoNumber(digit * mult)
+                        ]);
+                        distractors.delete(currentQuizAnswer);
+                        renderQuizButtons([currentQuizAnswer, ...Array.from(distractors).slice(0, 3)].sort(() => Math.random() - 0.5));
+                    } else {
+                        const base = (Math.floor(Math.random() * 80) + 12) * 1000;
+                        const mult = [2, 4, 5, 10][Math.floor(Math.random() * 4)];
+                        const ans = base * mult;
+                        currentQuizAnswer = formatIndoNumber(ans);
+
+                        displayContainer.innerHTML = `
+                            <div class="bg-white border-3 border-indigo-400 px-5 py-3 rounded-2xl font-display font-bold text-2xl sm:text-3xl text-slate-800 shadow">
+                                ${formatIndoNumber(base)} ✖️ ${mult} = ?
+                            </div>
+                        `;
+                        document.getElementById('quizQuestionText').innerHTML = `Hitunglah hasil perkalian bilangan di atas!`;
+
+                        const distractors = new Set([
+                            formatIndoNumber(ans + 10000),
+                            formatIndoNumber(ans * 10),
+                            formatIndoNumber(Math.floor(ans / 10)),
+                            formatIndoNumber(base * (mult + 1))
+                        ]);
+                        distractors.delete(currentQuizAnswer);
+                        renderQuizButtons([currentQuizAnswer, ...Array.from(distractors).slice(0, 3)].sort(() => Math.random() - 0.5));
+                    }
+
+                } else if (questionVariant === 1) {
+                    // Pembagian: Contoh (600.000 ÷ 3) atau (450.000 ÷ 100) atau (8 Ratus Ribuan ÷ 4)
+                    const divisors = [2, 3, 4, 5, 10, 100];
+                    const div = divisors[Math.floor(Math.random() * divisors.length)];
+                    const baseFactor = Math.floor(Math.random() * 8) + 2;
+                    const dividend = baseFactor * div * (div >= 10 ? 1000 : 10000);
+                    const ans = dividend / div;
+                    currentQuizAnswer = formatIndoNumber(ans);
+
+                    displayContainer.innerHTML = `
+                        <div class="bg-white border-3 border-amber-400 px-5 py-3 rounded-2xl font-display font-bold text-2xl sm:text-3xl text-slate-800 shadow">
+                            ${formatIndoNumber(dividend)} ➗ ${formatIndoNumber(div)} = ?
+                        </div>
+                    `;
+                    document.getElementById('quizQuestionText').innerHTML = `Perhatikan pergeseran posisi nolnya! Berapakah hasil pembagian di atas?`;
+
+                    const distractors = new Set([
+                        formatIndoNumber(ans * 10),
+                        formatIndoNumber(Math.max(1, Math.floor(ans / 10))),
+                        formatIndoNumber(ans + 10000),
+                        formatIndoNumber(baseFactor * 1000)
+                    ]);
+                    distractors.delete(currentQuizAnswer);
+                    renderQuizButtons([currentQuizAnswer, ...Array.from(distractors).slice(0, 3)].sort(() => Math.random() - 0.5));
+
+                } else if (questionVariant === 2) {
+                    // Selisih atau jumlah Nilai Angka dari dua digit berbeda dalam satu bilangan
+                    const digitsPool = [2, 3, 4, 5, 6, 7, 8, 9].sort(() => Math.random() - 0.5);
+                    const num = parseInt(digitsPool.slice(0, 6).join(''), 10);
+                    const padded = num.toString().padStart(7, '0');
+                    
+                    const idxA = Math.floor(Math.random() * 3) + 1;
+                    const idxB = Math.floor(Math.random() * (6 - idxA)) + idxA + 1;
+
+                    const digA = parseInt(padded[idxA], 10);
+                    const digB = parseInt(padded[idxB], 10);
+                    const valA = digA * PLACE_VALUES[idxA].multiplier;
+                    const valB = digB * PLACE_VALUES[idxB].multiplier;
+                    const isSum = Math.random() > 0.5;
+                    const ansVal = isSum ? valA + valB : valA - valB;
+                    currentQuizAnswer = formatIndoNumber(ansVal);
+
+                    for (let i = 1; i < 7; i++) {
+                        if (i === 4) {
+                            const dot = document.createElement('span');
+                            dot.className = "text-3xl font-bold text-slate-700 self-end pb-1";
+                            dot.textContent = ".";
+                            displayContainer.appendChild(dot);
+                        }
+                        const box = document.createElement('div');
+                        const isHighlighted = (i === idxA || i === idxB);
+                        box.className = isHighlighted
+                            ? "w-11 h-14 sm:w-14 sm:h-16 rounded-2xl bg-indigo-600 text-white border-4 border-amber-400 flex items-center justify-center text-2xl sm:text-4xl font-display font-bold shadow-lg"
+                            : "w-10 h-14 sm:w-12 sm:h-16 rounded-2xl bg-white text-slate-700 border-2 border-slate-300 flex items-center justify-center text-xl sm:text-3xl font-display font-bold";
+                        box.textContent = padded[i];
+                        displayContainer.appendChild(box);
+                    }
+
+                    document.getElementById('quizQuestionText').innerHTML = isSum
+                        ? `Berapakah <span class="text-emerald-600 underline">jumlah</span> Nilai Angka dari digit <strong>${digA}</strong> dan <strong>${digB}</strong>?`
+                        : `Berapakah <span class="text-rose-600 underline">selisih</span> Nilai Angka dari digit <strong>${digA}</strong> dan <strong>${digB}</strong>?`;
+
+                    const distractors = new Set([
+                        formatIndoNumber(isSum ? Math.abs(valA - valB) : valA + valB),
+                        formatIndoNumber(digA + digB),
+                        formatIndoNumber(valA + (digB * 10)),
+                        formatIndoNumber(Math.abs(valA - (digB * 100)))
+                    ]);
+                    distractors.delete(currentQuizAnswer);
+                    renderQuizButtons([currentQuizAnswer, ...Array.from(distractors).slice(0, 3)].sort(() => Math.random() - 0.5));
+
+                } else {
+                    // Komposisi penjumlahan / pengurangan nilai tempat
+                    const baseNum = (Math.floor(Math.random() * 600) + 120) * 1000 + (Math.floor(Math.random() * 8) + 1) * 100;
+                    const slotIdx = Math.floor(Math.random() * 4) + 1;
+                    const slot = PLACE_VALUES[slotIdx];
+                    const addDigit = Math.floor(Math.random() * 3) + 1;
+                    const isAdd = Math.random() > 0.4;
+                    const delta = addDigit * slot.multiplier;
+                    const resultNum = isAdd ? baseNum + delta : baseNum - delta;
+                    currentQuizAnswer = formatIndoNumber(resultNum);
+
+                    displayContainer.innerHTML = `
+                        <div class="bg-white border-3 border-amber-400 px-5 py-3 rounded-2xl font-display font-bold text-2xl sm:text-3xl text-slate-800 shadow">
+                            ${formatIndoNumber(baseNum)} ${isAdd ? '➕' : '➖'} <span class="text-indigo-600">${addDigit} ${slot.name}</span>
+                        </div>
+                    `;
+
+                    document.getElementById('quizQuestionText').innerHTML = `Berapakah hasil dari operasi bilangan di atas?`;
+
+                    const distractors = new Set([
+                        formatIndoNumber(isAdd ? baseNum - delta : baseNum + delta),
+                        formatIndoNumber(baseNum + (addDigit * slot.multiplier * 10)),
+                        formatIndoNumber(baseNum + (addDigit * Math.max(1, slot.multiplier / 10))),
+                        formatIndoNumber(baseNum + addDigit)
+                    ]);
+                    distractors.delete(currentQuizAnswer);
+                    renderQuizButtons([currentQuizAnswer, ...Array.from(distractors).slice(0, 3)].sort(() => Math.random() - 0.5));
+                }
+                return;
+            }
+
+            // Soal identifikasi Nilai Tempat / Nilai Angka (40% variasi)
+            document.getElementById('quizSubInstruction').textContent = "Perhatikan bilangan pada Gerbang Emas berikut:";
+            const digitsPool = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+            digitsPool.sort(() => Math.random() - 0.5);
+            const length = Math.random() > 0.3 ? 6 : 5;
+            const chosenDigits = digitsPool.slice(0, length);
+            const quizNum = parseInt(chosenDigits.join(''), 10);
+
+            const padded = quizNum.toString().padStart(7, '0');
+            const startIdx = 7 - length;
+            const targetIdx = Math.floor(Math.random() * length) + startIdx;
+            const targetDigit = parseInt(padded[targetIdx], 10);
+            const targetSlot = PLACE_VALUES[targetIdx];
+
+            for (let i = startIdx; i < 7; i++) {
+                if (i === 4) {
+                    const dot = document.createElement('span');
+                    dot.className = "text-3xl sm:text-4xl font-bold text-slate-700 self-end pb-1";
+                    dot.textContent = ".";
+                    displayContainer.appendChild(dot);
+                }
+
+                const box = document.createElement('div');
+                const isTarget = i === targetIdx;
+                box.className = isTarget
+                    ? "w-12 h-14 sm:w-14 sm:h-16 rounded-2xl bg-amber-500 text-white border-4 border-amber-700 flex items-center justify-center text-3xl sm:text-4xl font-display font-bold shadow-lg animate-bounce"
+                    : "w-11 h-14 sm:w-13 sm:h-16 rounded-2xl bg-white text-slate-700 border-2 border-slate-300 flex items-center justify-center text-2xl sm:text-3xl font-display font-bold";
+                box.textContent = padded[i];
+                displayContainer.appendChild(box);
+            }
+
+            const askPlaceName = Math.random() > 0.5;
+            let options = [];
+
+            if (askPlaceName) {
+                document.getElementById('quizQuestionText').innerHTML = 
+                    `Apakah <span class="text-amber-600 underline">Nilai Tempat</span> dari angka <strong>${targetDigit}</strong> yang melompat?`;
+                currentQuizAnswer = targetSlot.name;
+
+                const distractors = PLACE_VALUES
+                    .map(p => p.name)
+                    .filter(name => name !== currentQuizAnswer)
+                    .sort(() => Math.random() - 0.5)
+                    .slice(0, 3);
+                options = [currentQuizAnswer, ...distractors];
+            } else {
+                document.getElementById('quizQuestionText').innerHTML = 
+                    `Berapakah <span class="text-indigo-600 underline">Nilai Angka</span> dari digit <strong>${targetDigit}</strong> yang melompat?`;
+                const correctVal = targetDigit * targetSlot.multiplier;
+                currentQuizAnswer = formatIndoNumber(correctVal);
+
+                const multipliers = [1, 10, 100, 1000, 10000, 100000, 1000000];
+                const distractors = multipliers
+                    .filter(m => m !== targetSlot.multiplier)
+                    .map(m => formatIndoNumber(targetDigit * m))
+                    .sort(() => Math.random() - 0.5)
+                    .slice(0, 3);
+                options = [currentQuizAnswer, ...distractors];
+            }
+
+            options.sort(() => Math.random() - 0.5);
+            renderQuizButtons(options);
+        }
+
+        function renderQuizButtons(options) {
+            const optionsGrid = document.getElementById('quizOptionsGrid');
+            optionsGrid.innerHTML = '';
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "py-3.5 px-5 rounded-2xl bg-white hover:bg-sky-50 border-3 border-slate-200 hover:border-sky-400 font-display font-bold text-lg sm:text-xl text-slate-800 shadow-sm transition cursor-pointer";
+                btn.textContent = opt;
+                btn.onclick = () => checkQuizAnswer(btn, opt);
+                optionsGrid.appendChild(btn);
+            });
+        }
+
+        function checkQuizAnswer(selectedBtn, chosenOption) {
+            if (quizAnswered) return;
+            quizAnswered = true;
+
+            const feedbackEl = document.getElementById('quizFeedback');
+            const nextBtn = document.getElementById('btnNextQuestion');
+            const allBtns = document.getElementById('quizOptionsGrid').querySelectorAll('button');
+
+            allBtns.forEach(b => {
+                b.disabled = true;
+                if (b.textContent === currentQuizAnswer) {
+                    b.classList.remove('bg-white', 'border-slate-200');
+                    b.classList.add('bg-emerald-500', 'text-white', 'border-emerald-700');
+                }
+            });
+
+            if (chosenOption === currentQuizAnswer) {
+                quizScore += 10;
+                document.getElementById('quizScoreBadge').textContent = `Skor: ${quizScore}`;
+                feedbackEl.className = "rounded-2xl p-4 text-center font-bold text-base sm:text-lg bg-emerald-100 text-emerald-800 border-2 border-emerald-400 animate-pop";
+                feedbackEl.innerHTML = "🎉 Hebat! Jawabanmu benar! Kunci Gerbang Emas berbunyi <em>KLIK!</em>";
+            } else {
+                selectedBtn.classList.remove('bg-white', 'border-slate-200');
+                selectedBtn.classList.add('bg-rose-500', 'text-white', 'border-rose-700');
+                feedbackEl.className = "rounded-2xl p-4 text-center font-bold text-base sm:text-lg bg-rose-100 text-rose-800 border-2 border-rose-400 animate-pop";
+                feedbackEl.innerHTML = `😅 Kurang tepat! Jawaban yang benar adalah <strong>${currentQuizAnswer}</strong>.`;
+            }
+
+            feedbackEl.classList.remove('hidden');
+            nextBtn.classList.remove('hidden');
+        }
+
+        // Inisialisasi awal saat halaman dimuat
+        window.onload = () => {
+            renderCalculator(currentNumber);
+        };
+    </script>
+</body>
+</html>
